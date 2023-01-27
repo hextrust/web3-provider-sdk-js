@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+  <title>Ethers.js</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
+  <script src="https://loader.uat-testnet.metazens.xyz/api.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Gryfyn with Ethers.js (API_key: gryfyn_api_demo_local)</h1>
+    <input id="btn-open" type="button" value="Open Wallet" />
+    <div class="divider"></div>
+    <h2>My Gryfyn Wallet Address</h2>
+    <input id="btn-address" type="button" value="Get Wallet Address" />
+    <div id="myWalletAddress"></div>
+    <HR>
+    <BR>
+    <h2>Send Transaction:</h2>
+    <input id="input-amount" type="number" name="amount" maxlength="8" size="8" />
+    <h2>Destination Ethereum address</h2>
+    <input id="dest-address" name="address" maxlength="60" size="60"></input>
+    <br />
+    <input id="btn-send" type="button" value="Send Transaction" />
+  </div>
+</body>
+
+</html>
+
+<script>
+  const Wallet = GryFyn.default.getProvider('gryfyn_api_demo_local');
+  async function handleSendTransaction(amount, toAddress) {
+    try {
+      const myaddress = await getWalletAddress();
+      
+      console.log('wallet address', myaddress);
+
+      if (myaddress) {
+        let provider = new ethers.providers.Web3Provider(Wallet, 'any');      
+        const signer = provider.getSigner();
+        const nonce = await signer.getTransactionCount();
+        console.log('nonce', nonce);
+        signer.sendTransaction({
+          from: myaddress,
+          to: toAddress,
+          value: ethers.utils.parseEther(amount),
+          gasLimit: '0x5208',
+          nonce: nonce,
+          maxFeePerGas: ethers.utils.parseUnits('50', 'gwei'),
+          maxPriorityFeePerGas: ethers.utils.parseUnits('50.1', 'gwei'),
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  async function openGryfyn() {
+    Wallet.openWindow();
+  };
+
+  async function getWalletAddress() {
+    try {
+      const accounts = await Wallet.request({ method: 'eth_requestAccounts' });
+      const myaddress = accounts[0];
+
+      document.getElementById('myWalletAddress').innerHTML = myaddress;
+      return myaddress;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Generate Static HTML
+  const defaultAmount = 0.01;
+  const defaultAddress = '0x3f009302978CC82C6dAF06AAc49B5716be79cCb9';
+
+  const inputAmount = document.getElementById('input-amount');
+  inputAmount.setAttribute('value', defaultAmount);
+
+  const destAddress = document.getElementById('dest-address');
+  destAddress.setAttribute('value', defaultAddress);
+
+  document.getElementById('btn-send').onclick = function () {
+    let amount = inputAmount.value ? inputAmount.value : defaultAmount;
+    let address = destAddress.value ? destAddress.value : defaultAddress;
+    handleSendTransaction(amount, address);
+  };
+
+  document.getElementById('btn-open').onclick = function () {
+    openGryfyn();
+  };
+
+  document.getElementById('btn-address').onclick = function () {
+    getWalletAddress();
+  };
+</script>
+
+<body>
+  <hr />
+  <p>Include gryfyn api.js</p>
+
+  <pre>
+    &#60;script src="//cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js">&#60;/script&#62;
+    &#60;script src="//&#60;Gryfyn_PATH&#62;/api.min.js">&#60;/script&#62;
+  </pre>
+  <br />
+
+  Loading the API:
+  <pre>
+      &#60;script&#62;
+        const Wallet = GryFyn.default.getProvider('&#60;YOUR_API_KEY&#62;');
+      &#60;/script&#62;
+    </pre>
+
+  Sending Transaction:
+  <pre>
+
+    try {
+      // Get wallet address
+      const accounts = await Wallet.request({ method: 'eth_requestAccounts' });
+      const myaddress = accounts[0];
+      
+      console.log('wallet address', myaddress);
+
+      if (myaddress) {
+        let provider = new ethers.providers.Web3Provider(Wallet, 'any');      
+        const signer = provider.getSigner();
+
+        // Get Nonce
+        const nonce = await signer.getTransactionCount();
+        console.log('nonce', nonce);
+
+        // Send Tx
+        signer.sendTransaction({
+          from: myaddress,
+          to: toAddress,
+          value: ethers.utils.parseEther(amount),
+          gasLimit: '0x5208',
+          nonce: nonce,
+          maxFeePerGas: ethers.utils.parseUnits('50', 'gwei'),
+          maxPriorityFeePerGas: ethers.utils.parseUnits('50.1', 'gwei'),
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    </pre>
+</body>
