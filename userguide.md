@@ -2,6 +2,8 @@
 
 Gryfyn provides a Web3 API which allows developers to connect to an account and use it in a fashion similar to how they can integrate other Web3 providers such as MetaMask. For existing dApps, this allows the integration of Gryfyn without the need for large modifications of their existing code bases. At this point in time, the integration may be done via our Web3 Javascript library, and there is no typing in place.
 
+It complies the EIP-1193 standard `https://eips.ethereum.org/EIPS/eip-1193`, which allow access from web3 libraries like `ethers.js` or `web3.js`.
+
 This document provides a walk-through of how one may connect to the Gryfyn Web3 API, and subsequently, provides code samples as to the relevant calls.
 
 Please note that this version is accurate as of 21st September 2022, and may be subject to change from time-to-time. Gryfyn is not responsible for any losses which may be incurred during the usage of our API, which is provided without warranty.
@@ -16,8 +18,7 @@ To start, you can first import the API's JS file, `https://loader.uat-testnet.me
 <script src="https://<% hosting domain %>/api.min.js"></script>
 ```
 
-At the time of writing, there is only one hosting domain, `api.metazens.xyz`.
-Therefore, the resulting code snippet will be as follows:
+or using our UAT testnet
 
 ```html
 <script src="https://loader.uat-testnet.metazens.xyz/api.min.js"></script>
