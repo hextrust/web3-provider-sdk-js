@@ -1,6 +1,9 @@
 # Gryfyn Web3 provider
 
-For detailed document, please read the [userguide.md](userguide.md) for detail.
+For detailed documentation on how to integrate this SDK, please read the [userguide.md](userguide.md) for details.
+
+## API Support
+In order to obtain support for the API and for any queries, there are several parameters that Hex Trust will need to know in order to support your application. If you are interested in integrating with the Gryfyn wallet or would like to provide addresses to be whitelisted, please contact integrations@hextrust.com.
 
 ## Demo:
 
