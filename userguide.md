@@ -2,11 +2,24 @@
 
 Gryfyn provides a Web3 API which allows developers to connect to an account and use it in a fashion similar to how they can integrate other Web3 providers such as MetaMask. For existing dApps, this allows the integration of Gryfyn without the need for large modifications of their existing code bases. At this point in time, the integration may be done via our Web3 Javascript library, and there is no typing in place.
 
-It complies the EIP-1193 standard `https://eips.ethereum.org/EIPS/eip-1193`, which allow access from web3 libraries like `ethers.js` or `web3.js`.
+The SDK complies to the EIP-1193 standard `https://eips.ethereum.org/EIPS/eip-1193`, which allow access from web3 libraries like `ethers.js` or `web3.js`.
 
 This document provides a walk-through of how one may connect to the Gryfyn Web3 API, and subsequently, provides code samples as to the relevant calls.
 
-Please note that this version is accurate as of 21st September 2022, and may be subject to change from time-to-time. Gryfyn is not responsible for any losses which may be incurred during the usage of our API, which is provided without warranty.
+Please note that this version is accurate as of 7 Feb 2023, and may be subject to change from time-to-time. Gryfyn is not responsible for any losses which may be incurred during the usage of our API, which is provided without warranty.
+
+
+#### IMPORTANT
+Please note that transactions into and out of Gryfyn undergo a compliance check through a transaction monitoring system. However, there are currently limitations on risk scoring in testnet. Due to this, **testnet transactions will fail** unless they have been whitelisted by Gryfyn. In order to do this, please let us know about which address you would like to deposit from or to withdraw to.
+
+## API Support
+In order to obtain support for the API and for any queries, there are several parameters that Hex Trust will need to know in order to support your application. If you are interested in integrating with the Gryfyn wallet or would like to provide addresses to be whitelisted, please contact integrations@hextrust.com.
+
+
+----
+
+# API 
+This section describes the API proper.
 
 ## Step 1: Including the API using the Javascript library
 
