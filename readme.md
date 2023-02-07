@@ -3,7 +3,7 @@
 For detailed documentation on how to integrate this SDK, please read the [userguide.md](userguide.md) for details.
 
 ## API Support
-In order to obtain support for the API and for any queries, there are several parameters that Hex Trust will need to know in order to support your application. If you are interested in integrating with the Gryfyn wallet or would like to provide addresses to be whitelisted, please contact integrations@hextrust.com.
+In order to obtain support for the API and for any queries, there are several parameters that Hex Trust will need to know. If you are interested in integrating with the Gryfyn wallet or would like to provide domains and addresses to be whitelisted, please contact integrations@hextrust.com.
 
 ## Demo:
 
@@ -57,4 +57,4 @@ Please just remember to let us know any addresses you wish to deposit from or wi
 
 To do 'send transaction' call the Gryfyn user must have passed KYC and have activated 2fa from this page
 
-in sandbox KYC must be approved manually so pls post here the users you would like us to approve
+in sandbox KYC must be approved manually so please send an email with the addresses you would like to approve to this email: integrations@hextrust.com 
