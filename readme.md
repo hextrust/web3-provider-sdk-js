@@ -33,11 +33,24 @@ npx http-server -p 3000 examples/
 
 Feel free to View source for the implementation.
 
+
+### Important pre-requisite
+_Make sure cookies from third parties are allowed in your browser_.    
+Using Chrome as an example, the cookies setting should be either of: 
+* `Block third-party cookies in Incognito` (navigate in normal tab with this setting)
+* `Allow all cookies`
+
+![Alt Text](docs/chrome-cookies.png)
+
+<br>
+
 ## Open http://localhost:3000 with your browser
 
 *You should see this*
 
 ![Alt text](docs/localhost.jpg)
+
+<br>
 
 ## Click any of the links
 
@@ -47,9 +60,11 @@ Click any of the 3 links. eg. if you click the first you will see a test demo pa
 
 Click open wallet and can login (needed first)
 
-Then you can eg. from the web page call a send tx
+Then you can trigger actions from the web page such as send transaction
 
 Please just remember to let us know any addresses you wish to deposit from or withdraw to, as we have to whitelist for compliance (transaction risk scoring is not available in testnet)
+
+<br>
 
 ## KYC 
 
