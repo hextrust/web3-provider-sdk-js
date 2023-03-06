@@ -225,3 +225,31 @@ Wallet.getUserLevel(); // Get User Level.
 // Open kyc Uer page
 Wallet.request({ method: 'gryfyn_requestKYC' });
 ```
+
+
+## Events. 
+
+The web3 provider supports EIP-1193 events
+
+```javascript
+
+  // On wallet connected or Login successful
+  Wallet.on('connect', (evt) => {
+      console.log('connect', evt);
+  });
+
+  // On Logout
+  Wallet.on('disconnect', (evt) => {
+      console.log('disconnect', evt);
+  });
+
+  // On chain changed, login or during tx send on different chain. 
+  Wallet.on('chainChanged', (evt) => {
+      console.log('chainChanged', evt);
+  });
+
+  // on login
+  Wallet.on('accountsChanged', (evt) => {
+      console.log('accountsChanged', evt);
+  });
+```
