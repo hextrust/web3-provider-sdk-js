@@ -33,14 +33,31 @@
 
 <script>
   const Wallet = GryFyn.default.getProvider('gryfyn_api_demo_local');
+
+  Wallet.on('connect', (evt) => {
+    console.log('connect', evt);
+  });
+
+  Wallet.on('disconnect', (evt) => {
+    console.log('disconnect', evt);
+  });
+
+  Wallet.on('chainChanged', (evt) => {
+    console.log('chainChanged', evt);
+  });
+
+  Wallet.on('accountsChanged', (evt) => {
+    console.log('accountsChanged', evt);
+  });
+
   async function handleSendTransaction(amount, toAddress) {
     try {
       const myaddress = await getWalletAddress();
-      
+
       console.log('wallet address', myaddress);
 
       if (myaddress) {
-        let provider = new ethers.providers.Web3Provider(Wallet, 'any');      
+        let provider = new ethers.providers.Web3Provider(Wallet, 'any');
         const signer = provider.getSigner();
         const nonce = await signer.getTransactionCount();
         console.log('nonce', nonce);

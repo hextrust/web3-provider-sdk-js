@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Web3</title>
     <meta charset="utf-8" />
@@ -31,6 +32,23 @@
 
 <script>
     const Wallet = GryFyn.default.getProvider('gryfyn_api_demo_local');
+
+    Wallet.on('connect', (evt) => {
+        console.log('connect', evt);
+    });
+
+    Wallet.on('disconnect', (evt) => {
+        console.log('disconnect', evt);
+    });
+
+    Wallet.on('chainChanged', (evt) => {
+        console.log('chainChanged', evt);
+    });
+
+    Wallet.on('accountsChanged', (evt) => {
+        console.log('accountsChanged', evt);
+    });
+
     let web3 = new Web3(Wallet);
 
     // This is similar to metamask window.ethereum;
