@@ -1,6 +1,19 @@
 # Gryfyn Web3 provider
 
+This example provides a demonstration of how to integrate a decentralized application (Dapp) with GryFyn wallet in a testnet environment and localhost. 
+
 For detailed documentation on how to integrate this SDK, please read the [userguide.md](userguide.md) for details.
+
+## GryFyn Wallet
+
+By following this guide, you can open the GryFyn wallet.
+
+![Alt text](docs/wallet.png)
+
+And users must log in or register an account to access the wallet.
+
+![Alt text](docs/login.png)
+
 
 ## API Support
 In order to obtain support for the API and for any queries, there are several parameters that Hex Trust will need to know. If you are interested in integrating with the Gryfyn wallet or would like to provide domains and addresses to be whitelisted, please contact integrations@hextrust.com.
@@ -38,16 +51,6 @@ npx http-server -p 3000 examples/
 Feel free to View source for the implementation.
 
 
-### Important pre-requisite
-_Make sure cookies from third parties are allowed in your browser_.    
-Using Chrome as an example, the cookies setting should be either of: 
-* `Block third-party cookies in Incognito` (navigate in normal tab with this setting)
-* `Allow all cookies`
-
-![Alt Text](docs/chrome-cookies.png)
-
-<br>
-
 ## Open http://localhost:3000 with your browser
 
 *You should see this*
@@ -77,3 +80,13 @@ Please just remember to let us know any addresses you wish to deposit from or wi
 To do 'send transaction' call the Gryfyn user must have passed KYC and have activated 2fa from this page
 
 in sandbox KYC must be approved manually so please send an email with the addresses you would like to approve to this email: integrations@hextrust.com 
+
+
+### If wallet cannot show up
+
+_Make sure cookies from third parties are allowed in your browser_.    
+Using Chrome as an example, the cookies setting should be either of: 
+* `Block third-party cookies in Incognito` (navigate in normal tab with this setting)
+* `Allow all cookies`
+
+![Alt Text](docs/chrome-cookies.png)
