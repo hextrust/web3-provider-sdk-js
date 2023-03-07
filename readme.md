@@ -13,10 +13,14 @@ The API Key `gryfyn_api_demo_local` is whitelisted with
 http://localhost
 http://localhost:8000
 http://localhost:8080
+http://localhost:8081
+http://localhost:8082
 http://localhost:3000
 http://127.0.0.1
 http://127.0.0.1:8000
 http://127.0.0.1:8080
+http://127.0.0.1:8081
+http://127.0.0.1:8082
 http://127.0.0.1:3000
 
 ```
