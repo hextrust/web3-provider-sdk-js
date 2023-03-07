@@ -8,11 +8,11 @@ For detailed documentation on how to integrate this SDK, please read the [usergu
 
 By following this guide, you can open the GryFyn wallet.
 
-![Alt text](docs/wallet.png)
+<img src='./docs/wallet.png' width="384px">
 
 And users must log in or register an account to access the wallet.
 
-![Alt text](docs/login.png)
+<img src='./docs/login.png' width="384px">
 
 
 ## API Support
