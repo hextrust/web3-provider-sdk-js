@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <title>GryFyn Web3 Provider demo</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
+    <script src="https://loader.uat-testnet.metazens.xyz/api.min.js"></script>
+    <script>
+        const TITLE = 'Gryfyn UAT-Testnet';
+        const API_KEY = 'gryfyn_api_demo_local';
+
+        window.onload = () => {
+            document.getElementById('title').innerHTML = TITLE;
+            document.getElementById('apikey').innerHTML = API_KEY;
+            document.getElementById('walletinit').innerHTML = '<pre>const Wallet = GryFyn.default.getProvider("' + API_KEY + '\");<pre>';
+        };
+
+    </script>
+    <style>
+        #title {
+            font-size: 2em;
+        }
+
+        #apikey {
+            font-size: 1.5em;
+        }
+
+        #logDiv {
+            min-height: 800px;
+            width: 100%;
+            height: 60%;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 10px;
+            flex-direction: row;
+            align-items: stretch;
+        }
+
+        .left-pane {
+            flex: 0 0 500px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .right-pane {
+            flex: 1 0 300px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            position: sticky;
+            top: 0;
+        }
+
+        .functionBox {
+            display: flex;
+            background-color: #eeeeee;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px;
+            text-align: left;
+        }
+
+        .column {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .longInput {
+            width: 400px;
+        }
+
+        .leftTextArea {
+            width: 500px;
+            height: 300px;
+        }
+
+        .functionBox input[type=button] {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            padding: 8px;
+            margin-right: 5px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .functionBox input[type=button]:hover {
+            background-color: #3e8e41;
+        }
+
+        .functionBox input[type=button]:active {
+            background-color: #3e8e41;
+            box-shadow: 0 1px #8f8f8f;
+            transform: translateY(4px);
+        }
+    </style>
+</head>
+
+<script>
+    const Wallet = GryFyn.default.getProvider(API_KEY);
+
+    Wallet.on('connect', (evt) => {
+        printLog('EVENT connect', JSON.stringify(evt));
+    });
+
+    Wallet.on('disconnect', (evt) => {
+        printLog('EVENT disconnect', JSON.stringify(evt));
+    });
+
+    Wallet.on('chainChanged', (evt) => {
+        printLog('EVENT chainChanged', JSON.stringify(evt));
+    });
+
+    Wallet.on('accountsChanged', (evt) => {
+        printLog('EVENT accountsChanged', JSON.stringify(evt));
+    });
+
+    async function call_eth_chainId() {
+        const res = await Wallet.request({ method: 'eth_chainId' });
+        printLog('eth_chainId', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    async function call_eth_accounts() {
+        const res = await Wallet.request({ method: 'eth_accounts' });
+        printLog('eth_accounts', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    async function call_eth_requestAccounts() {
+        const res = await Wallet.request({ method: 'eth_requestAccounts' });
+        printLog('eth_requestAccounts', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    async function call_eth_getBalance() {
+        const res = await Wallet.request({ method: 'eth_getBalance' });
+        printLog('eth_getBalance', JSON.stringify(res, null, 2));
+        printLog('ETH/MATIC Value:', ethers.utils.formatEther(res));
+    }
+
+    async function call_eth_sendTransaction() {
+
+        const value = document.getElementById('eth_sendTransaction_value').value;
+        const toAddress = document.getElementById('eth_sendTransaction_destination').value;
+
+        const myaddressArr = await call_eth_requestAccounts();
+        const myaddress = myaddressArr[0];
+
+        const param = {
+            "from": myaddress, "to": toAddress,
+            "value": ethers.utils.hexValue(ethers.utils.parseEther(value)),
+            "gas": "0x9999",
+            "maxFeePerGas": "0x5d21dba00",
+            "maxPriorityPerGas": "0x5d21dba00"
+        }
+
+        const res = await Wallet.request({ "method": "eth_sendTransaction", "params": [param] });
+
+        printLog('eth_sendTransaction', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    async function call_eth_signTypedData() {
+        const myaddressArr = await call_eth_requestAccounts();
+        const myaddress = myaddressArr[0]
+
+        const data = JSON.parse(document.getElementById('eth_signTypedData_value').value);
+        const res = await Wallet.request({ method: 'eth_signTypedData', params: [data, myaddress] });
+        printLog('eth_signTypedData', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    let signedMessage = '';
+    async function call_personal_sign() {
+        const myaddressArr = await call_eth_requestAccounts();
+        const myaddress = myaddressArr[0]
+
+        const message = document.getElementById('personal_sign_message').value;
+        const undefinedPassword = undefined;
+
+        const msg = `0x${bytesToHex(stringToUTF8Bytes(message))}`;
+        const res = await Wallet.request({ method: 'personal_sign', params: [msg, myaddress, undefinedPassword] });
+
+        signedMessage = res;
+
+        printLog('personal_sign', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    async function call_personal_ecRecover() {
+        const message = document.getElementById('personal_sign_message').value;
+        const msg = `0x${bytesToHex(stringToUTF8Bytes(message))}`;
+        // const res = await Wallet.request({ method: 'personal_ecRecover', params: [msg, signedMessage] });
+        const res = ethers.utils.recoverAddress(msg, signedMessage);
+        printLog('personal_ecRecover', JSON.stringify(res, null, 2));
+        return res;
+    }
+
+    function signTypedDataLoadDefault() {
+        document.getElementById('eth_signTypedData_value').value = `{ "types": { "EIP712Domain": [{ "name": "name", "type": "string" }, { "name": "version", "type": "string" }, { "name": "verifyingContract", "type": "address" }, { "name": "salt", "type": "bytes32" }], "ERC20ForwardRequest": [{ "name": "from", "type": "address" }, { "name": "to", "type": "address" }, { "name": "token", "type": "address" }, { "name": "txGas", "type": "uint256" }, { "name": "tokenGasPrice", "type": "uint256" }, { "name": "batchId", "type": "uint256" }, { "name": "batchNonce", "type": "uint256" }, { "name": "deadline", "type": "uint256" }, { "name": "data", "type": "bytes" }] }, "domain": { "name": "Biconomy Forwarder", "version": "1", "verifyingContract": "0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b", "salt": "0x0000000000000000000000000000000000000000000000000000000000013881" }, "primaryType": "ERC20ForwardRequest", "message": { "from": "0x64294A144ebA470764FF7dFC17369e4B05fCb005", "to": "0x0a48819d012cfb877630771c02fe859428820000", "token": "0x276e11D3F2e221A02C44E5919410B1C635e536bc", "txGas": 51930, "tokenGasPrice": "0", "batchId": 0, "batchNonce": 0, "deadline": 1661256232, "data": "0x23b872dd00000000000000000000000064294a144eba470764ff7dfc17369e4b05fcb00500000000000000000000000097de685daec47a139c9078cf99657ce688672ebe000000000000000000000000000000000000000000000000000009184e72a000"}}`;
+    }
+
+    function bytesToHex(bytes) {
+        return Array.from(
+            bytes,
+            byte => byte.toString(16).padStart(2, "0")
+        ).join("");
+    }
+
+    // You almost certainly want UTF-8, which is
+    // now natively supported:
+    function stringToUTF8Bytes(string) {
+        return new TextEncoder().encode(string);
+    }
+
+    ////// Gryfyn functions
+
+    async function gryfyn_openWallet() {
+        await Wallet.openWallet()
+    }
+    async function gryfyn_closeWallet() {
+        await Wallet.closeWallet()
+    }
+    async function gryfyn_getUserLevel() {
+        const res = await Wallet.getUserLevel()
+        printLog('getUserLevel()', res);
+        return res;
+    }
+
+    async function gryfyn_setChainId(chainIDDecString) {
+        const res = await Wallet.setChainId(chainIDDecString)
+        printLog('setChainId', res);
+        return res;
+    }
+
+    async function gryfyn_getSupportedChainID() {
+        const res = await Wallet.getSupportedChainID();
+        printLog('getSupportedChainID', res);
+        return res;
+    }
+
+    async function gryfyn_removeIFrame() {
+        await Wallet.removeIFrame()
+    }
+    async function gryfyn_connect() {
+        await Wallet.connect()
+    }
+    async function gryfyn_logout() {
+        await Wallet.logout()
+    }
+
+    function printLog(title, message) {
+        const logDiv = document.getElementById('logDiv');
+        var today = new Date();
+
+        // Extract the hours, minutes, and seconds from the Date object
+        var hours = today.getHours();
+        var minutes = today.getMinutes();
+        var seconds = today.getSeconds();
+
+        if (hours < 10) {
+            hours = '0' + hours;
+        }
+
+        if (seconds < 10) {
+            seconds = '0' + seconds;
+        }
+
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
+        // Print the time in a pretty format
+        const time = hours + ':' + minutes + ':' + seconds;
+
+        logDiv.value += "-- " + time + " | " + title + " --\n" + message + "\n\n";
+        console.log(message);
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function clearMessageBox() {
+        const logDiv = document.getElementById('logDiv');
+        logDiv.value = "";
+    }
+
+</script>
+
+<body>
+    <container>
+
+        <DIV id="title"></DIV>
+        <DIV id="apikey"></DIV>
+        <DIV id="walletinit"></DIV>
+
+        <div class="container">
+            <div class="left-pane">
+                Request functions<BR>
+                <PRE> await Wallet.request({ method: 'eth_requestAccounts' }); </PRE>
+
+                <div class="functionBox"><input type="button" value="eth_chainId" onclick="call_eth_chainId()">
+
+                </div>
+                <div class="functionBox"><input type="button" value="eth_accounts" onclick="call_eth_accounts()"> </div>
+                <div class="functionBox"><input type="button" value="eth_requestAccounts"
+                        onclick="call_eth_requestAccounts()">
+                </div>
+                <div class="functionBox"><input type="button" value="eth_getBalance" onclick="call_eth_getBalance()">
+                </div>
+                <div class="functionBox column"><input type="button" value="eth_sendTransaction"
+                        onclick="call_eth_sendTransaction()">
+                    <div>💰 <input type="input" value="0.0001" placeholder="Value" id="eth_sendTransaction_value"></div>
+                    <div>↗️ <input type="input" value="0x0a48819d012cfb877630771c02fe859428820000"
+                            placeholder="Destination" id="eth_sendTransaction_destination" class="longInput"></div>
+                </div>
+                <div class="functionBox column">
+                    <input type="button" value="eth_signTypedData" onclick="call_eth_signTypedData()">
+                    <textarea class="leftTextArea"
+                        id="eth_signTypedData_value">{ "types": { "EIP712Domain": [{ "name": "name", "type": "string" }, { "name": "version", "type": "string" }, { "name": "verifyingContract", "type": "address" }, { "name": "salt", "type": "bytes32" }], "ERC20ForwardRequest": [{ "name": "from", "type": "address" }, { "name": "to", "type": "address" }, { "name": "token", "type": "address" }, { "name": "txGas", "type": "uint256" }, { "name": "tokenGasPrice", "type": "uint256" }, { "name": "batchId", "type": "uint256" }, { "name": "batchNonce", "type": "uint256" }, { "name": "deadline", "type": "uint256" }, { "name": "data", "type": "bytes" }] }, "domain": { "name": "Biconomy Forwarder", "version": "1", "verifyingContract": "0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b", "salt": "0x0000000000000000000000000000000000000000000000000000000000013881" }, "primaryType": "ERC20ForwardRequest", "message": { "from": "0x64294A144ebA470764FF7dFC17369e4B05fCb005", "to": "0x0a48819d012cfb877630771c02fe859428820000", "token": "0x276e11D3F2e221A02C44E5919410B1C635e536bc", "txGas": 51930, "tokenGasPrice": "0", "batchId": 0, "batchNonce": 0, "deadline": 1661256232, "data": "0x23b872dd00000000000000000000000064294a144eba470764ff7dfc17369e4b05fcb00500000000000000000000000097de685daec47a139c9078cf99657ce688672ebe000000000000000000000000000000000000000000000000000009184e72a000" }}</textarea>
+                    <input type="button" value="Load default" onclick="signTypedDataLoadDefault()">
+                </div>
+                <div class="functionBox column"><input type="button" value="personal_sign"
+                        onclick="call_personal_sign()">
+                    <div>💬 <input type="input" value="Welcome to GryFyn Wallet" placeholder="Message To Sign"
+                            id="personal_sign_message" class="longInput"></div>
+                </div>
+                <div class="functionBox"><input type="button" value="personal_ecRecover"
+                        onclick="call_personal_ecRecover()">
+                </div>
+                <br>
+                <hr>
+
+                Gryfyn wallet function<BR>
+                <PRE> await Wallet.gryfyn_connect(); </PRE>
+                <BR>
+                <div class="functionBox"><input type="button" value="connect" onclick="gryfyn_connect()"></div>
+                <div class="functionBox"><input type="button" value="logout" onclick="gryfyn_logout()"></div>
+                <div class="functionBox"><input type="button" value="openWallet" onclick="gryfyn_openWallet()"></div>
+                <div class="functionBox"><input type="button" value="closeWallet" onclick="gryfyn_closeWallet()"></div>
+                <div class="functionBox"><input type="button" value="getUserLevel" onclick="gryfyn_getUserLevel()">
+                </div>
+                <div class="functionBox"><input type="button" value="getSupportedChainID"
+                        onclick="gryfyn_getSupportedChainID()"></div>
+                <div class="functionBox">
+                    <input type="button" value="setChainId('80001')" onclick="gryfyn_setChainId('80001')">
+                    <input type="button" value="setChainId('5')" onclick="gryfyn_setChainId('5')">
+                    <input type="button" value="setChainId('97')" onclick="gryfyn_setChainId('97')">
+                </div>
+                <div class="functionBox"><input type="button" value="removeIFrame" onclick="gryfyn_removeIFrame()">
+                </div>
+
+            </div>
+            <div class="right-pane">
+                <div class="functionBox column"><input type="button" value="Clear message box"
+                        onclick="clearMessageBox()">
+                    <textarea name="textarea_content" id="logDiv" height="800px"></textarea>
+                    <input type="button" value="Clear message box" onclick="clearMessageBox()">
+                </div>
+            </div>
+    </container>
+</body>
