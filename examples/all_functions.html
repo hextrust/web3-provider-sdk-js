@@ -12,7 +12,7 @@
     <script>
         const TITLE = 'Gryfyn UAT-Testnet';
         const API_KEY = 'gryfyn_api_demo_local';
-
+    
         window.onload = () => {
             document.getElementById('title').innerHTML = TITLE;
             document.getElementById('apikey').innerHTML = API_KEY;
@@ -208,6 +208,27 @@
         document.getElementById('eth_signTypedData_value').value = `{ "types": { "EIP712Domain": [{ "name": "name", "type": "string" }, { "name": "version", "type": "string" }, { "name": "verifyingContract", "type": "address" }, { "name": "salt", "type": "bytes32" }], "ERC20ForwardRequest": [{ "name": "from", "type": "address" }, { "name": "to", "type": "address" }, { "name": "token", "type": "address" }, { "name": "txGas", "type": "uint256" }, { "name": "tokenGasPrice", "type": "uint256" }, { "name": "batchId", "type": "uint256" }, { "name": "batchNonce", "type": "uint256" }, { "name": "deadline", "type": "uint256" }, { "name": "data", "type": "bytes" }] }, "domain": { "name": "Biconomy Forwarder", "version": "1", "verifyingContract": "0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b", "salt": "0x0000000000000000000000000000000000000000000000000000000000013881" }, "primaryType": "ERC20ForwardRequest", "message": { "from": "0x64294A144ebA470764FF7dFC17369e4B05fCb005", "to": "0x0a48819d012cfb877630771c02fe859428820000", "token": "0x276e11D3F2e221A02C44E5919410B1C635e536bc", "txGas": 51930, "tokenGasPrice": "0", "batchId": 0, "batchNonce": 0, "deadline": 1661256232, "data": "0x23b872dd00000000000000000000000064294a144eba470764ff7dfc17369e4b05fcb00500000000000000000000000097de685daec47a139c9078cf99657ce688672ebe000000000000000000000000000000000000000000000000000009184e72a000"}}`;
     }
 
+    async function sendRawTransaction() {
+
+        const myaddressArr = await call_eth_requestAccounts();
+        const myaddress = myaddressArr[0];
+
+        const tx = JSON.parse(document.getElementById('rawSignedTx').value);
+
+        const res = await Wallet.request({ "method": "eth_sendTransaction", "params": [tx] });
+
+        printLog('eth_sendTransaction', JSON.stringify(res, null, 2));
+    }
+
+    async function call_sendRawTransaction() {
+        const value = JSON.parse(document.getElementById('rawSignedTx').value);
+
+        const provider = new ethers.providers.Web3Provider(Wallet, 'any');
+
+        // const res = await provider.sendTransaction(value);
+        printLog('sendRawTransaction', JSON.stringify(value.hash));
+    }
+
     function bytesToHex(bytes) {
         return Array.from(
             bytes,
@@ -255,6 +276,10 @@
     }
     async function gryfyn_logout() {
         await Wallet.logout()
+    }
+
+    function gryfyn_walletMode(mode) {
+        Wallet.setWalletMode(mode);
     }
 
     function printLog(title, message) {
@@ -333,12 +358,23 @@
                 <div class="functionBox"><input type="button" value="personal_ecRecover"
                         onclick="call_personal_ecRecover()">
                 </div>
+
+                <div class="functionBox column">
+                    <textarea id="rawSignedTx" class="leftTextArea">{"chainId":"80001","gasLimit":"0x61a8","maxPriorityFeePerGas":"1000000000","maxFeePerGas":"0x23cfb4e42314","to":"0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747","data":"0xa9059cbb0000000000000000000000000a48819d012cfb877630771c02fe8594288200000000000000000000000000000000000000000000000000000000000000002710"}</textarea>
+                    <input type="button" value="sendRawTransaction" onclick="sendRawTransaction()">
+                </div>
                 <br>
                 <hr>
 
                 Gryfyn wallet function<BR>
                 <PRE> await Wallet.gryfyn_connect(); </PRE>
                 <BR>
+
+                <div class="functionBox">
+                    <input type="button" value="iFrame / Popup" onclick="gryfyn_walletMode(0)">
+                    <input type="button" value="iFrame Only" onclick="gryfyn_walletMode(1)">
+                <input type="button" value="Popup Only" onclick="gryfyn_walletMode(2)"></div>
+
                 <div class="functionBox"><input type="button" value="connect" onclick="gryfyn_connect()"></div>
                 <div class="functionBox"><input type="button" value="logout" onclick="gryfyn_logout()"></div>
                 <div class="functionBox"><input type="button" value="openWallet" onclick="gryfyn_openWallet()"></div>
