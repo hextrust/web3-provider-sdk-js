@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+  <title>Ethers.js</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js"></script>
+  <script src="https://loader.uat-testnet.metazens.xyz/api.min.js"></script>
+</head>
+
+<script>
+
+  const chainIDList = ['5', '80001', '97'];
+  const Wallet = GryFyn.default.getProvider('gryfyn_api_demo_local');
+  let provider;
+  let isConnected = false;
+
+  async function connectWallet() {
+    if (!isConnected) {
+      await Wallet.connect();
+      provider = new ethers.providers.Web3Provider(Wallet);
+      isConnected = true;
+    }
+  }
+
+  async function testEtherAddress() {
+    if (!isConnected) {
+      await connectWallet();
+    }
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    alert(address);
+  }
+
+  async function testChainID() {
+    if (!isConnected) {
+      await connectWallet();
+    }
+
+    await Wallet.setChainID(chainIDList[Math.floor(Math.random() * chainIDList.length)]);
+    provider = new ethers.providers.Web3Provider(Wallet);
+    const signer = provider.getSigner();
+    const addr = await signer.getAddress();
+    const chainID = await Wallet.request({ method: 'eth_chainId' });
+    const net = await provider.getNetwork();
+
+    alert(addr + " is on chainID: " + chainID + " and network: " + net.name);
+  }
+
+  async function sendTransaction() {
+    if (!isConnected) {
+      await connectWallet();
+    }
+
+    const signer = provider.getSigner();
+    await signer.sendTransaction({
+      to: "0x0a48819d012cfb877630771c02fe859428820000",
+      value: ethers.utils.parseEther("0.0001") // Make sure you have enough balance to trigger the transaction window.
+    })
+  }
+</script>
+
+<input onclick="connectWallet()" type="button" value="Connect Wallet">
+<BR><BR>
+<input onclick="testEtherAddress()" type="button" value="Get Address by ethers.js">
+<BR><BR>
+<input onclick="testChainID()" type="button" value="change ChainID Randomally">
+<BR><BR>
+<input onclick="sendTransaction()" type="button" value="sendTransaction">
+</body>
